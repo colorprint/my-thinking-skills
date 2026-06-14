@@ -17,10 +17,16 @@ jobs:
       - name: Clone upstream
         run: git clone --depth 1 https://github.com/ngmeyer/skills upstream
 
-      - name: Mirror skills + plugin manifest
+      - name: Mirror skills + manifest (without pinning version)
         run: |
           rsync -a --delete upstream/skills/ plugins/ngmeyer-skills/skills/
-          cp upstream/.claude-plugin/plugin.json plugins/ngmeyer-skills/.claude-plugin/plugin.json
+          # copy upstream plugin.json but DROP "version" so updates track the git commit, not a pinned string
+          python3 - <<'PY'
+          import json
+          d = json.load(open("upstream/.claude-plugin/plugin.json"))
+          d.pop("version", None)
+          json.dump(d, open("plugins/ngmeyer-skills/.claude-plugin/plugin.json","w"), indent=2)
+          PY
           cp -f upstream/LICENSE plugins/ngmeyer-skills/LICENSE || true
           rm -rf upstream
 
