@@ -1,0 +1,37 @@
+name: Sync ngmeyer-skills from upstream
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # daily ~06:17 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone upstream
+        run: git clone --depth 1 https://github.com/ngmeyer/skills upstream
+
+      - name: Mirror skills + plugin manifest
+        run: |
+          rsync -a --delete upstream/skills/ plugins/ngmeyer-skills/skills/
+          cp upstream/.claude-plugin/plugin.json plugins/ngmeyer-skills/.claude-plugin/plugin.json
+          cp -f upstream/LICENSE plugins/ngmeyer-skills/LICENSE || true
+          rm -rf upstream
+
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: sync ngmeyer-skills from upstream@main"
+            git push
+          else
+            echo "Already up to date with upstream."
+          fi

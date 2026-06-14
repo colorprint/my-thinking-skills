@@ -1,0 +1,17 @@
+{
+  "name": "my-thinking-skills",
+  "owner": {
+    "name": "Anton"
+  },
+  "metadata": {
+    "description": "Personal marketplace bundling Neal Meyer's full skills set (ngmeyer-skills) as a self-contained plugin, kept in sync with upstream by a GitHub Action.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ngmeyer-skills",
+      "description": "Ten composable thinking/engineering skills incl. council-review (DMAD), adversarial-review, rigorous-review, claude-md, session-recover, session-close, skillforge, six-pager, weekly-setup-improvements, write-well. Vendored from ngmeyer/skills@main; auto-synced.",
+      "source": "./plugins/ngmeyer-skills"
+    }
+  ]
+}
